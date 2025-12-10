@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hytale Name Checker Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; text-align: center; padding: 50px; }
+        input, button { padding: 10px; font-size: 16px; margin: 5px; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Hytale Name Checker Tool</h1>
+    <input type="text" id="nameInput" placeholder="Enter your desired name" maxlength="12">
+    <button onclick="checkName()">Check Name</button>
+    <div id="result"></div>
+
+    <script>
+        function checkName() {
+            const name = document.getElementById('nameInput').value.trim();
+            const result = document.getElementById('result');
+
+            if(name.length < 3) {
+                result.textContent = "Name is too short. Minimum 3 characters.";
+                result.style.color = "red";
+                return;
+            }
+
+            if(name.length > 12) {
+                result.textContent = "Name is too long. Maximum 12 characters.";
+                result.style.color = "red";
+                return;
+            }
+
+            const allowed = /^[a-zA-Z0-9]+$/;
+            if(!allowed.test(name)) {
+                result.textContent = "Invalid characters! Only letters and numbers allowed.";
+                result.style.color = "red";
+                return;
+            }
+
+            // Simulated availability check
+            const unavailableNames = ["Admin", "Test", "Player"];
+            if(unavailableNames.includes(name)) {
+                result.textContent = "Name is already taken!";
+                result.style.color = "red";
+            } else {
+                result.textContent = "Name is available!";
+                result.style.color = "green";
+            }
+        }
+    </script>
+</body>
+</html>
