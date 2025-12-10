@@ -5,30 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hytale Name Checker Tool</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f5f5f5; text-align: center; padding: 50px; }
-        input, button { padding: 10px; font-size: 16px; margin: 5px; }
-        #result { margin-top: 20px; font-weight: bold; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0b1b3d; /* Dark navy */
+            color: #ffffff; /* White text */
+            text-align: center;
+            padding: 50px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        input {
+            width: 250px;
+        }
+        button {
+            cursor: pointer;
+            background-color: #1e2a5a;
+            color: #ffffff;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <h1>Hytale Name Checker Tool</h1>
-    <input type="text" id="nameInput" placeholder="Enter your desired name" maxlength="12">
+    <input type="text" id="nameInput" placeholder="Enter your desired name" maxlength="16">
     <button onclick="checkName()">Check Name</button>
     <div id="result"></div>
 
     <script>
-        function checkName() {
+        async function checkName() {
             const name = document.getElementById('nameInput').value.trim();
             const result = document.getElementById('result');
 
-            if(name.length < 3) {
+            if (name.length < 3) {
                 result.textContent = "Name is too short. Minimum 3 characters.";
                 result.style.color = "red";
                 return;
             }
 
-            if(name.length > 12) {
-                result.textContent = "Name is too long. Maximum 12 characters.";
+            if (name.length > 16) {
+                result.textContent = "Name is too long. Maximum 16 characters.";
                 result.style.color = "red";
                 return;
             }
@@ -40,14 +63,28 @@
                 return;
             }
 
-            // Simulated availability check
-            const unavailableNames = ["Admin", "Test", "Player"];
-            if(unavailableNames.includes(name)) {
-                result.textContent = "Name is already taken!";
-                result.style.color = "red";
-            } else {
-                result.textContent = "Name is available!";
-                result.style.color = "green";
+            const url = `https://accounts.hytale.com/api/account/username-reservations/availability?username=${encodeURIComponent(name)}`;
+            
+            try {
+                const response = await fetch(url);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.available) {
+                        result.textContent = "Name is available!";
+                        result.style.color = "green";
+                    } else {
+                        result.textContent = "Name is already taken!";
+                        result.style.color = "red";
+                    }
+                } else {
+                    result.textContent = "Error checking name. Please try again.";
+                    result.style.color = "orange";
+                }
+            } catch (err) {
+                result.textContent = "Unable to reach API. CORS may be blocking the request.";
+                result.style.color = "orange";
+                console.error(err);
             }
         }
     </script>
